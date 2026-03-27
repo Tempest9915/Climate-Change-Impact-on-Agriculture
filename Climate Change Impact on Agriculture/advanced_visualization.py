@@ -5,23 +5,95 @@ Advanced visualization functions for complex analytical charts
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
+# Added make_subplots for the dual-axis line chart
+from plotly.subplots import make_subplots 
 from config import (
     PLOTLY_LAYOUT, AXIS_STYLE, COUNTRY_COLORS, 
     GREEN_SCALE, INCOME_COLORS, INCOME_ORDER, 
     CORRELATION_COLUMNS, CORRELATION_LABELS
 )
 
+def create_temp_co2_line_chart(dff):
+    """
+    Create a dual-axis line chart for Temperature and CO2 Emissions over time
+    """
+    # Aggregate data by year for the trend lines
+    trend_data = dff.groupby("Year").agg({
+        "Average_Temperature_C": "mean",
+        "CO2_Emissions_MT": "mean"
+    }).reset_index()
+
+    # Initialize subplots with a secondary y-axis
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+    # 1. Temperature Line (Left Axis)
+    fig.add_trace(go.Scatter(
+        x=trend_data["Year"], 
+        y=trend_data["Average_Temperature_C"],
+        name="Avg Temp (°C)",
+        mode="lines+markers",
+        line=dict(color="#dc2626", width=3), # Red for heat
+        hovertemplate="Year: %{x}<br>Temp: %{y:.2f}°C<extra></extra>"
+    ), secondary_y=False)
+
+    # 2. CO2 Emissions Line (Right Axis)
+    fig.add_trace(go.Scatter(
+        x=trend_data["Year"], 
+        y=trend_data["CO2_Emissions_MT"],
+        name="CO2 Emissions (MT)",
+        mode="lines+markers",
+        line=dict(color="#4b5563", width=3, dash="dot"), # Slate for emissions
+        hovertemplate="Year: %{x}<br>CO2: %{y:.2f} MT<extra></extra>"
+    ), secondary_y=True)
+
+    # Update layout using the project's standard configuration
+    line_layout = dict(PLOTLY_LAYOUT)
+    
+    # Create axis styles with color overrides
+    temp_axis_style = dict(AXIS_STYLE)
+    temp_axis_style.update(dict(
+        tickfont=dict(color="#dc2626", size=10),
+        title_font=dict(color="#dc2626", size=10)
+    ))
+    
+    co2_axis_style = dict(AXIS_STYLE)
+    co2_axis_style.update(dict(
+        tickfont=dict(color="#4b5563", size=10),
+        title_font=dict(color="#4b5563", size=10)
+    ))
+    
+    line_layout.update(dict(
+        height=360,
+        xaxis=dict(**AXIS_STYLE, title="Year"),
+        yaxis=dict(
+            **temp_axis_style, 
+            title="Temperature (°C)"
+        ),
+        yaxis2=dict(
+            **co2_axis_style, 
+            title="CO2 Emissions (MT)",
+            overlaying="y", 
+            side="right",
+            showgrid=False
+        ),
+        legend=dict(
+            x=0.5, y=-0.25, 
+            xanchor="center",
+            yanchor="top",
+            orientation="h",
+            bgcolor="rgba(255,255,255,0.8)",
+            bordercolor="#e5e7eb", 
+            borderwidth=1
+        ),
+        margin=dict(t=10, b=40, l=55, r=55),
+    ))
+    fig.update_layout(**line_layout)
+    
+    return fig
 
 def create_stacked_area_chart(ew_pivot, dff):
     """
     Create stacked area chart for extreme weather events over time
-    
-    Args:
-        ew_pivot (pd.DataFrame): Extreme weather data pivoted by year and country
-        dff (pd.DataFrame): Filtered dataset (for styling)
-        
-    Returns:
-        go.Figure: Plotly figure
     """
     fig = go.Figure()
     ew_countries = ew_pivot.columns.tolist()
@@ -56,16 +128,9 @@ def create_stacked_area_chart(ew_pivot, dff):
     
     return fig
 
-
 def create_heatmap_chart(dff):
     """
     Create heatmap: Country × Crop Type Yield
-    
-    Args:
-        dff (pd.DataFrame): Filtered dataset
-        
-    Returns:
-        go.Figure: Plotly figure
     """
     heat_pivot = (dff.groupby(["Country", "Crop_Type"])["Crop_Yield_MT_per_HA"]
                   .mean().round(3).unstack(fill_value=0))
@@ -96,55 +161,9 @@ def create_heatmap_chart(dff):
     
     return fig
 
-
-def create_correlation_heatmap(dff):
-    """
-    Create correlation matrix heatmap with diagonal values (r=1) visible
-    """
-    corr_matrix = dff[CORRELATION_COLUMNS].corr()
-    corr_matrix.columns = CORRELATION_LABELS
-    corr_matrix.index = CORRELATION_LABELS
-    
-    # Removed the np.fill_diagonal line to keep the 1.00 values
-    corr_z = corr_matrix.values
-    
-    fig = go.Figure(go.Heatmap(
-        z=corr_z,
-        x=CORRELATION_LABELS,
-        y=CORRELATION_LABELS,
-        colorscale="RdYlGn",
-        zmid=0, zmin=-1, zmax=1,
-        colorbar=dict(title=dict(text="r", font=dict(size=10, color="#9ca3af")),
-                      thickness=10, len=0.7,
-                      tickfont=dict(size=9, color="#9ca3af")),
-        # Updated text generator to handle all values since none are NaN now
-        text=[[f"{v:.2f}" for v in row] for row in corr_z],
-        texttemplate="%{text}",
-        textfont=dict(size=9, color="#1f2937", weight="bold"),
-        hovertemplate="<b>%{x} × %{y}</b><br>r = %{z:.3f}<extra></extra>",
-    ))
-    
-    corr_layout = dict(PLOTLY_LAYOUT)
-    corr_layout.update(dict(
-        height=360,
-        xaxis=dict(**AXIS_STYLE, showgrid=False, tickangle=-30),
-        yaxis=dict(**AXIS_STYLE, showgrid=False),
-        margin=dict(t=10, b=70, l=90, r=40),
-    ))
-    fig.update_layout(**corr_layout)
-    
-    return fig
-
-
 def create_inequality_chart(dff):
     """
     Create grouped bar chart showing structural inequality by income group
-    
-    Args:
-        dff (pd.DataFrame): Filtered dataset
-        
-    Returns:
-        go.Figure: Plotly figure
     """
     group_summary = (dff.groupby("Income_Group").agg(
         avg_yield      = ("Crop_Yield_MT_per_HA", "mean"),
@@ -216,7 +235,6 @@ def create_choropleth_map(dff):
                      total_econ     = ("Economic_Impact_Million_USD", "sum"))
                 .reset_index().round(3))
     
-    # 1. Coordinate data for labels (Center points of the countries)
     country_coords = {
         "ARG": {"lon": -63.6, "lat": -38.4},
         "AUS": {"lon": 133.8, "lat": -27.0},
@@ -230,13 +248,11 @@ def create_choropleth_map(dff):
         "USA": {"lon": -95.7, "lat": 37.1},
     }
 
-    # Map the coordinates back to the dataframe
     map_data['lon'] = map_data['ISO3'].map(lambda x: country_coords.get(x, {}).get('lon'))
     map_data['lat'] = map_data['ISO3'].map(lambda x: country_coords.get(x, {}).get('lat'))
 
     fig = go.Figure()
 
-    # 2. Add the Choropleth Trace (The colored countries)
     fig.add_trace(go.Choropleth(
         locations=map_data["ISO3"],
         z=map_data["avg_yield"],
@@ -251,8 +267,6 @@ def create_choropleth_map(dff):
         marker=dict(line=dict(color="#ffffff", width=1)),
     ))
 
-    # 3. Add the Label Trace (The Country Names)
-    # This places text at the lon/lat points defined above
     fig.add_trace(go.Scattergeo(
         lon=map_data["lon"],
         lat=map_data["lat"],
@@ -263,10 +277,9 @@ def create_choropleth_map(dff):
             size=10,
             color="#1f2937",
         ),
-        hoverinfo="skip" # Don't let the text trace interfere with choropleth hover
+        hoverinfo="skip" 
     ))
 
-    # 4. Map Layout Settings
     map_layout = dict(
         height=500,
         margin=dict(t=10, b=10, l=0, r=80),
