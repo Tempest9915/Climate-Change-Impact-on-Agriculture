@@ -85,27 +85,27 @@ def display_kpi_cards(kpis):
     st.markdown(f"""
     <div class="kpi-grid">
       <div class="kpi-card" style="--accent:#16a34a">
-        <div class="kpi-label">🌍 Countries</div>
+        <div class="kpi-label"> Countries</div>
         <div class="kpi-value">{kpis["num_countries"]}</div>
         <div class="kpi-sub">Nations in selection</div>
       </div>
       <div class="kpi-card" style="--accent:#dc2626">
-        <div class="kpi-label">🌡️ Avg Temperature</div>
+        <div class="kpi-label"> Avg Temperature</div>
         <div class="kpi-value">{kpis["avg_temp"]}°C</div>
         <div class="kpi-sub">Global farm avg</div>
       </div>
       <div class="kpi-card" style="--accent:#d97706">
-        <div class="kpi-label">🌾 Avg Crop Yield</div>
+        <div class="kpi-label"> Avg Crop Yield</div>
         <div class="kpi-value">{kpis["avg_yield"]}</div>
         <div class="kpi-sub">MT per hectare</div>
       </div>
       <div class="kpi-card" style="--accent:#7c3aed">
-        <div class="kpi-label">💰 Econ Impact</div>
+        <div class="kpi-label"> Econ Impact</div>
         <div class="kpi-value">${kpis["econ_impact"]}T</div>
         <div class="kpi-sub">Trillion USD total</div>
       </div>
       <div class="kpi-card" style="--accent:#64748b">
-        <div class="kpi-label">💨 Avg CO₂ (MT)</div>
+        <div class="kpi-label"> Avg CO₂ (MT)</div>
         <div class="kpi-value">{kpis["avg_co2"]}</div>
         <div class="kpi-sub">Per observation</div>
       </div>
