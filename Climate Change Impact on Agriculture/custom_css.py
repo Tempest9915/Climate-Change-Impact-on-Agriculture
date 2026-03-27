@@ -100,9 +100,9 @@ CUSTOM_CSS = """
     letter-spacing: 2px;
     text-transform: uppercase;
     color: #4a7c59;
-    border-bottom: 2px solid #d1fae5;
-    padding-bottom: 6px;
-    margin: 16px 0 12px 0;
+    border-top: 2px solid #d1fae5;
+    padding-top: 6px;
+    margin: 8px 0 2px 0;
 }
 /* ── Insight Boxes ── */
 .insight-box {
