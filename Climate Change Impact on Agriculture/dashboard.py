@@ -14,14 +14,14 @@ from visualization import (
 )
 from advanced_visualization import (
     create_stacked_area_chart, create_heatmap_chart,
-    create_correlation_heatmap, create_inequality_chart,
-    create_choropleth_map
+    create_inequality_chart, create_choropleth_map, 
+    create_temp_co2_line_chart
 )
 
 warnings.filterwarnings("ignore")
 
 # ─────────────────────────────────────────────────────────────────────────────
-# PAGE CONFIG (must be first Streamlit call)
+# PAGE CONFIG 
 # ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Climate & Agriculture Dashboard",
@@ -52,7 +52,7 @@ dff = apply_filters(df, sel_countries, sel_crops, sel_years, sel_strats)
 
 # Check if filtered data is empty
 if dff.empty:
-    st.error("⚠️ No data matches your filter selection. Please adjust your filters.")
+    st.error(" No data matches your filter selection. Please adjust your filters.")
     st.stop()
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -104,7 +104,7 @@ with col_a1:
     fig_ml = create_multilayer_chart(temp_trend)
     chart_panel(
         title="Multi-Layer: Crop Yield · Temperature · Extreme Events",
-        subtitle="Bars = Yield (left axis) · Lines = Temp & Events (right axis) · 1990–2024",
+        subtitle="",
         tag_label="Multi-Layer",
         tag_class="tag-blue",
         fig=fig_ml,
@@ -114,15 +114,13 @@ with col_a2:
     fig_yb = create_yield_by_crop_chart(yield_crop)
     chart_panel(
         title="Avg Crop Yield by Crop Type",
-        subtitle="Mean MT/HA across all years & countries",
+        subtitle="",
         tag_label="Bar Chart",
         tag_class="tag-green",
         fig=fig_yb,
     )
 
-# EXAMPLE USAGE IN YOUR APP:
-# fig = px.scatter(df, x="Avg Temp", y="Yield")
-# st.plotly_chart(format_fig(fig), use_container_width=True)
+
 # ══════════════════════════════════════════════════════════════════════════════
 # SECTION B – RELATIONSHIPS
 # ══════════════════════════════════════════════════════════════════════════════
@@ -134,7 +132,7 @@ with col_b1:
     fig_sc = create_scatter_chart(scatter_df)
     chart_panel(
         title="Temperature vs Crop Yield by Country",
-        subtitle="2,000 sampled records · hover for crop details",
+        subtitle="",
         tag_label="Scatter",
         tag_class="tag-blue",
         fig=fig_sc,
@@ -144,7 +142,7 @@ with col_b2:
     fig_bp = create_boxplot_chart(dff)
     chart_panel(
         title="Crop Yield Distribution by Adaptation Strategy",
-        subtitle="Box = IQR · line = median · diamond = mean",
+        subtitle="",
         tag_label="Box Plot",
         tag_class="tag-amber",
         fig=fig_bp,
@@ -161,7 +159,7 @@ with col_c1:
     fig_ew = create_stacked_area_chart(ew_pivot, dff)
     chart_panel(
         title="Extreme Weather Events Over Time",
-        subtitle="Stacked by country · annual average",
+        subtitle="",
         tag_label="Stacked Area",
         tag_class="tag-red",
         fig=fig_ew,
@@ -171,7 +169,7 @@ with col_c2:
     fig_hm = create_heatmap_chart(dff)
     chart_panel(
         title="Crop Yield Heatmap — Country × Crop Type",
-        subtitle="Avg MT/HA · darker green = higher yield",
+        subtitle="",
         tag_label="Heatmap",
         tag_class="tag-green",
         fig=fig_hm,
@@ -180,18 +178,19 @@ with col_c2:
 # ══════════════════════════════════════════════════════════════════════════════
 # SECTION D – CORRELATION & BIAS
 # ══════════════════════════════════════════════════════════════════════════════
-display_section_header("D &nbsp;·&nbsp; Correlation & Structural Inequality")
+display_section_header("D &nbsp;·&nbsp; Trend Chart & Structural Inequality")
 
 col_d1, col_d2 = st.columns(2)
 
 with col_d1:
-    fig_corr = create_correlation_heatmap(dff)
+    # Use the new line chart function
+    fig_temp_co2 = create_temp_co2_line_chart(dff) 
     chart_panel(
-        title="Correlation Matrix – Climate & Agricultural Variables",
+        title="Temperature & CO2 Emission Trends",
         subtitle="",
-        tag_label="Heatmap",
-        tag_class="tag-teal",
-        fig=fig_corr,
+        tag_label="Line Chart",
+        tag_class="tag-red",
+        fig=fig_temp_co2,
     )
 
 with col_d2:
