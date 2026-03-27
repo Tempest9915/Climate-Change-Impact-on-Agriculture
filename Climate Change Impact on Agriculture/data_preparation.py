@@ -72,15 +72,15 @@ def get_sidebar_filters(df):
         tuple: (countries, crops, years, strategies) selected by user
     """
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### 📊 Interactive Filters")
-    st.sidebar.markdown("<span style='font-size:0.8rem;color:#94a3b8'>Customize the dashboard by selecting data dimensions below</span>", unsafe_allow_html=True)
+    st.sidebar.markdown("###  Filters")
+    st.sidebar.markdown("", unsafe_allow_html=True)
     
     # Country multiselect
     countries = sorted(df["Country"].unique())
-    st.sidebar.markdown("**🌍 Countries**")
-    st.sidebar.markdown("<span style='font-size:0.75rem;color:#64748b'>Select countries to analyze. Leave empty to view all.</span>", unsafe_allow_html=True)
+    st.sidebar.markdown("  Countries")
+    st.sidebar.markdown("", unsafe_allow_html=True)
     selected_countries = st.sidebar.multiselect(
-        "🌍 Countries",
+        " Countries",
         countries,
         default=countries,
         key="country_filter",
@@ -89,10 +89,10 @@ def get_sidebar_filters(df):
     
     # Crop type multiselect
     crops = sorted(df["Crop_Type"].unique())
-    st.sidebar.markdown("**🌾 Crop Types**")
-    st.sidebar.markdown("<span style='font-size:0.75rem;color:#64748b'>Filter by agricultural products. Multi-select available.</span>", unsafe_allow_html=True)
+    st.sidebar.markdown(" Crop Types")
+    st.sidebar.markdown("", unsafe_allow_html=True)
     selected_crops = st.sidebar.multiselect(
-        "🌾 Crop Types",
+        " Crop Types",
         crops,
         default=crops,
         key="crop_filter",
@@ -101,10 +101,10 @@ def get_sidebar_filters(df):
     
     # Year range slider
     years = sorted(df["Year"].unique())
-    st.sidebar.markdown("**📅 Time Period**")
-    st.sidebar.markdown("<span style='font-size:0.75rem;color:#64748b'>Analyze trends across 35 years of historical data (1990–2024).</span>", unsafe_allow_html=True)
+    st.sidebar.markdown(" Time Period")
+    st.sidebar.markdown("", unsafe_allow_html=True)
     year_range = st.sidebar.slider(
-        "📅 Year Range",
+        " Year Range",
         min_value=int(years[0]),
         max_value=int(years[-1]),
         value=(int(years[0]), int(years[-1])),
@@ -114,10 +114,10 @@ def get_sidebar_filters(df):
     
     # Adaptation strategy multiselect
     strategies = sorted(df["Adaptation_Strategies"].dropna().unique())
-    st.sidebar.markdown("**🛡️ Adaptation Strategies**")
-    st.sidebar.markdown("<span style='font-size:0.75rem;color:#64748b'>Focus on specific climate mitigation strategies employed by farms.</span>", unsafe_allow_html=True)
+    st.sidebar.markdown(" Adaptation Strategies")
+    st.sidebar.markdown("", unsafe_allow_html=True)
     selected_strategies = st.sidebar.multiselect(
-        "🛡️ Adaptation Strategies",
+        " Adaptation Strategies",
         strategies,
         default=strategies,
         key="strategy_filter",
