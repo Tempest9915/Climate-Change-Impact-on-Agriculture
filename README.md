@@ -1,5 +1,3 @@
-"""
-=============================================================================
 ITS68404 – Data Visualization | Group Assignment 2026
 Taylor's University | January 2026 Semester
 
@@ -18,5 +16,4 @@ HOW TO RUN
        streamlit run dashboard.py
 
 4. The browser will open automatically at http://localhost:8501
-=============================================================================
-"""
+
