@@ -180,10 +180,13 @@ def create_boxplot_chart(dff):
         vals = adapt_clean[adapt_clean["Adaptation_Strategies"] == strat][
             "Crop_Yield_MT_per_HA"
         ].dropna()
+        
         fig.add_trace(go.Box(
-            y=vals, name=strat,
+            y=vals, 
+            name=strat,
             marker_color=strat_colors[i % len(strat_colors)],
             boxmean="sd",
+            boxpoints=False, 
             hovertemplate=f"<b>{strat}</b><br>Yield: %{{y:.3f}}<extra></extra>",
         ))
     
