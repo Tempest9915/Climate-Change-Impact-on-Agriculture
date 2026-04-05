@@ -2,7 +2,7 @@ ITS68404 – Data Visualization | Group Assignment 2026
 Taylor's University | January 2026 Semester
 
 Dataset : Climate_Change_Impact_on_Agriculture.csv
-SDG     : SDG 2 – Zero Hunger  |  SDG 13 – Climate Action
+SDG     : SDG 2 – Zero Hunger | SDG 10 - Reduce Inequalities | SDG 13 – Climate Action
 
 HOW TO RUN
 ----------
